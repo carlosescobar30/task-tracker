@@ -39,7 +39,7 @@ public class FormatConverters {
         return new Task(id,description,status);
     }
 
-    public static List<Task> parseToTasks(String json) {
+    public static List<Task> formatToTasks(String json) {
         List<Task> tasksList = new ArrayList<>();
         int tasksStart = json.indexOf("\"tasks\":") + 9;
         int tasksEnd = json.indexOf("]",tasksStart);
