@@ -38,10 +38,12 @@ public class Task {
     //SETTERS
 
     public void setDescription(String description){
+
         this.description = description;
     }
 
     public  void setStatus(String status){
+
         this.status = status;
     }
 
