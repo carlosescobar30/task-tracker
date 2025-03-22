@@ -1,38 +1,65 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
     private final int id;
     private static int tasksCounter = 0;
     private String description;
-    private String status = "Sin comenzar";
+    private String status;
+    private final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss");
+    private final LocalDateTime createdAt;
+    private LocalDateTime updateAt;
+
 
     //BUILDERS
 
     public Task(String description) {
         this.id = ++tasksCounter;
         this.description = description;
+        this.status = "unstarted";
+        this.createdAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
     }
 
-    public Task(Integer id, String description, String status){
+    public Task(Integer id, String description, String status, LocalDateTime createdAt, LocalDateTime updateAt){
         this.id = id;
         this.description = description;
         this.status = status;
+        this.createdAt = createdAt;
+        this.updateAt = updateAt;
     }
 
     //GETTERS
 
     public int getId() {
-        return id;
+
+        return this.id;
     }
 
     public String getDescription() {
-        return description;
+
+        return this.description;
     }
 
     public String getStatus(){
-        return status;
+
+        return this.status;
     }
 
     public static int getTasksCounter() {
-        return tasksCounter;
+        return  tasksCounter;
+    }
+
+    public static DateTimeFormatter getDateFormat (){
+        return dateFormat;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return this.updateAt;
     }
 
     //SETTERS
@@ -51,11 +78,23 @@ public class Task {
         Task.tasksCounter = tasksCounter;
     }
 
+    public void setUpdateAt() {
+        this.updateAt = LocalDateTime.now();
+    }
+
     @Override
     public String toString(){
         return "Id = " + getId() +'\n' +
                 "Description = " + getDescription() +'\n' +
-                "Status = " + getStatus();
+                "Status = " + getStatus() + '\n' +
+                "Creation date = " + getCreatedAt() + '\n' +
+                "Last update = " + getUpdateAt();
     }
+
+
+
+
+
+
 }
 

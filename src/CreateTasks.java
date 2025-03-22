@@ -14,7 +14,7 @@ public class CreateTasks {
             writer.write(Integer.toString(Task.getTasksCounter()));
             writer.write("\n },\n");
             writer.write("  \"tasks\":[\n");
-            writer.write(FormatConverters.formatToJson(task).toString());
+            writer.write(Formatters.formatToJson(task).toString());
             writer.write("\n ]\n}");
 
             System.out.println("archivo creado");
@@ -28,12 +28,11 @@ public class CreateTasks {
 
     public static  void createNextTask (String taskName, File file){
         Task task = new Task(taskName);
-        System.out.println(task.getId());
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
         TaskManager.updateCounterSB(builder);
         int indexEndJson = builder.lastIndexOf("]");
         builder.insert((indexEndJson - 2),(",\n"));
-        builder.insert(indexEndJson,FormatConverters.formatToJson(task));
+        builder.insert(indexEndJson, Formatters.formatToJson(task));
         try(FileWriter writer = new FileWriter(file)){
             writer.write(builder.toString());
         }catch (IOException e){

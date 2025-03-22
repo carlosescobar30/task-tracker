@@ -1,6 +1,11 @@
 import java.io.File;
 
 public class TaskManager {
+
+    public void updateDescription(Task task, String description){
+        task.setDescription(description);
+    }
+
     public static void updateCounterSB(StringBuilder builder){
         int indexValueStart = builder.indexOf("\"allTasks\":") + 11;
         int indexValueEnd = builder.indexOf("}", builder.indexOf("\"allTasks\":"));
