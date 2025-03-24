@@ -27,6 +27,7 @@ public class CreateTasks {
     }
 
     public static  void createNextTask (String taskName, File file){
+        TaskManager.updateCounterAttr(file);
         Task task = new Task(taskName);
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
         TaskManager.updateCounterSB(builder);
