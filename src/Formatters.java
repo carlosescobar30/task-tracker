@@ -1,6 +1,8 @@
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Formatters {
@@ -61,8 +63,9 @@ public class Formatters {
         return new Task(id,description,status,createdAt,updateAt);
     }
 
-    public static List<Task> formatToTasks(String json) {
-        List<Task> tasksList = new ArrayList<>();
+    public static HashMap<Integer,Task> formatToTasks(File file) {
+        String json = ReadTasks.readTasks(file);
+        HashMap<Integer,Task> tasksHashMap = new HashMap<>();
         int tasksStart = json.indexOf("\"tasks\":") + 9;
         int tasksEnd = json.indexOf("]",tasksStart);
         String tasksString = json.substring(tasksStart,tasksEnd);
@@ -74,11 +77,11 @@ public class Formatters {
             if (!taskStringInd.trim().endsWith("}")){
                 taskStringInd = taskStringInd + "}";
             }
-            tasksList.add(formatToObject(taskStringInd));
+            tasksHashMap.put(formatToObject(taskStringInd).getId(),formatToObject(taskStringInd));
         }
 
 
-        return  tasksList;
+        return  tasksHashMap;
     }
 
 }
