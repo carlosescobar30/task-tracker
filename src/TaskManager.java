@@ -1,29 +1,15 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class TaskManager {
 
-    /*public static void deleteTask(Integer taskId, File file){
-        HashMap<Integer, Task> tasks = new HashMap<>(Formatters.formatToTasks(file));
-        tasks.remove(taskId);
-        StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
-        try (FileWriter writer = new FileWriter(file)){
-            for (Task task : tasks.values()){
-                writer.write(builder.toString());
-            }
-        }catch (IOException e){
-            System.out.println("Error Fatal" + e.getMessage());
-        }
-        int indexId = builder.indexOf("\"id\":");
-        if (indexId == -1){
-            file.delete();
-        }
 
-    }*/
 
-    public static void updateDescription(Task task, String description,File file){
+    public static void updateDescription(Integer taskId, String description,File file){
+        TreeMap<Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
+        Task task = taskTreeMap.get(taskId);
         task.setDescription(description);
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
         int indexId = builder.indexOf("\"id\":" + task.getId());
@@ -41,7 +27,9 @@ public class TaskManager {
         }
     }
 
-    public static void updateStatus(Task task, String status,File file){
+    public static void updateStatus(Integer taskId, String status,File file){
+        TreeMap<Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
+        Task task = taskTreeMap.get(taskId);
         task.setDescription(status);
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
         int indexId = builder.indexOf("\"id\":" + task.getId());
@@ -59,23 +47,9 @@ public class TaskManager {
         }
     }
 
-    public static void updateCounterSB(StringBuilder builder){
-        int indexValueStart = builder.indexOf("\"allTasks\":") + 11;
-        int indexValueEnd = builder.indexOf("}", builder.indexOf("\"allTasks\":"));
-        builder.replace(indexValueStart,indexValueEnd,Integer.toString(Task.getTasksCounter()) + "\n ");
+    public static void updateLastId(File file){
+        TreeMap<Integer,Task> tasksTree = Formatters.fileToTreeMap(file);
+        Task lastTask = tasksTree.lastEntry().getValue();
+        Task.setLastId(lastTask.getId());
     }
-
-    public static Integer captureTasksCounter(String json){
-        return Integer.parseInt(json.substring(
-                json.indexOf("\"allTasks\":") + 11,
-                json.indexOf("}", json.indexOf("\"allTasks\":"))).trim());
-    }
-
-    public static void updateCounterAttr(File file){
-        String jsonString = ReadTasks.readTasks(file);
-        int capturedCounterTasks = TaskManager.captureTasksCounter(jsonString);
-        Task.setTasksCounter(capturedCounterTasks);
-    }
-
-
 }

@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Task {
     private final int id;
-    private static int tasksCounter = 0;
+    private static int lastId = 0;
     private String description;
     private String status;
     private final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss");
@@ -14,7 +14,7 @@ public class Task {
     //BUILDERS
 
     public Task(String description) {
-        this.id = ++tasksCounter;
+        this.id = ++lastId;
         this.description = description;
         this.status = "unstarted";
         this.createdAt = LocalDateTime.now();
@@ -46,8 +46,8 @@ public class Task {
         return this.status;
     }
 
-    public static int getTasksCounter() {
-        return  tasksCounter;
+    public static int getLastId() {
+        return lastId;
     }
 
     public static DateTimeFormatter getDateFormat (){
@@ -74,8 +74,8 @@ public class Task {
         this.status = status;
     }
 
-    public static void setTasksCounter(int tasksCounter) {
-        Task.tasksCounter = tasksCounter;
+    public static void setLastId(int lastId) {
+        Task.lastId = lastId;
     }
 
     public void setUpdateAt() {

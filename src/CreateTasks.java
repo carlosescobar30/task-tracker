@@ -7,14 +7,9 @@ public class CreateTasks {
         Task task = new Task(taskName);
         File file = new File("tasks.json");
         try (FileWriter writer = new FileWriter(file)) {
-            Task.setTasksCounter(Task.getTasksCounter());
             writer.write("{\n");
-            writer.write("  \"metadata\":{\n");
-            writer.write("   \"allTasks\":");
-            writer.write(Integer.toString(Task.getTasksCounter()));
-            writer.write("\n },\n");
             writer.write("  \"tasks\":[\n");
-            writer.write(Formatters.formatToJson(task).toString());
+            writer.write(Formatters.TaskToStringBuilder(task).toString());
             writer.write("\n ]\n}");
 
             System.out.println("archivo creado");
@@ -27,13 +22,12 @@ public class CreateTasks {
     }
 
     public static  void createNextTask (String taskName, File file){
-        TaskManager.updateCounterAttr(file);
+        TaskManager.updateLastId(file);
         Task task = new Task(taskName);
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
-        TaskManager.updateCounterSB(builder);
         int indexEndJson = builder.lastIndexOf("]");
         builder.insert((indexEndJson - 2),(",\n"));
-        builder.insert(indexEndJson, Formatters.formatToJson(task));
+        builder.insert(indexEndJson, Formatters.TaskToStringBuilder(task));
         try(FileWriter writer = new FileWriter(file)){
             writer.write(builder.toString());
         }catch (IOException e){

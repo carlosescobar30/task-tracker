@@ -1,17 +1,14 @@
 import java.io.File;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.TreeMap;
 
 public class Formatters {
 
 
 
-    public static StringBuilder formatToJson(Task task) {
+    public static StringBuilder TaskToStringBuilder(Task task) {
         StringBuilder formatter = new StringBuilder();
-
         formatter
                 .append("    {\n")
                 .append("     \"id\":")
@@ -34,7 +31,7 @@ public class Formatters {
     }
 
 
-    public static Task formatToObject(String json){
+    public static Task StringToTask(String json){
 
         int id = Integer.parseInt(json.substring(
                 json.indexOf("\"id\":")+5,
@@ -63,9 +60,9 @@ public class Formatters {
         return new Task(id,description,status,createdAt,updateAt);
     }
 
-    public static HashMap<Integer,Task> formatToTasks(File file) {
+    public static TreeMap<Integer,Task> fileToTreeMap(File file) {
         String json = ReadTasks.readTasks(file);
-        HashMap<Integer,Task> tasksHashMap = new HashMap<>();
+        TreeMap<Integer,Task> tasksTreeMap = new TreeMap<>();
         int tasksStart = json.indexOf("\"tasks\":") + 9;
         int tasksEnd = json.indexOf("]",tasksStart);
         String tasksString = json.substring(tasksStart,tasksEnd);
@@ -77,11 +74,11 @@ public class Formatters {
             if (!taskStringInd.trim().endsWith("}")){
                 taskStringInd = taskStringInd + "}";
             }
-            tasksHashMap.put(formatToObject(taskStringInd).getId(),formatToObject(taskStringInd));
+            tasksTreeMap.put(StringToTask(taskStringInd).getId(), StringToTask(taskStringInd));
         }
 
 
-        return  tasksHashMap;
+        return  tasksTreeMap;
     }
 
 }
