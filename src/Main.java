@@ -13,11 +13,13 @@ public class Main {
         System.out.println("2.actualizar tarea");
         System.out.println("3.eliminar tarea");
         String option = scanner.nextLine();
+        int taskId;
+        String taskIdString;
         actions:switch (option){
             case "1":
                 System.out.println("por favor, ingrese la nueva tarea");
                 String taskDescription = scanner.nextLine();
-                if (!file.exists()){
+                if (!file.exists() || file.length() == 0){
                     CreateTasks.createFirstTasks(taskDescription);
                 }else {
                     CreateTasks.createNextTask(taskDescription,file);
@@ -26,13 +28,13 @@ public class Main {
                 break;
 
             case "2":
+                System.out.println("por favor ingrese el id del elemento que desea modificar");
+                taskIdString = scanner.nextLine();
+                taskId = Integer.parseInt(taskIdString);
                 System.out.println("¿que desea actualizar?");
                 System.out.println("1.descripcion");
                 System.out.println("2.estado");
                 String optionUpdate = scanner.nextLine();
-                System.out.println("por favor ingrese el id del elemento que desea modificar");
-                String taskIdString = scanner.nextLine();
-                Integer taskId = Integer.parseInt(taskIdString);
                 switch (optionUpdate){
                     case "1":
                         System.out.println("por favor ingrese la nueva descripcion");
@@ -40,17 +42,26 @@ public class Main {
                         TaskManager.updateDescription(taskId,newTaskDescription,file);
                         System.out.println("Descripcion actualizada con exito");
                         break actions;
+
                     case "2":
                         System.out.println("por favor ingrese el nuevo estado");
                         String newTaskStatus = scanner.nextLine();
                         TaskManager.updateStatus(taskId,newTaskStatus,file);
                         System.out.println("Estado actualizada con exito");
                         break actions;
-                    case "3":
 
-                }
+                    default:
+                        System.out.println("Opcion no valida");
+                        break actions;
+                        }
 
+            case "3":
+                System.out.println("por favor ingrese el id de la tarea que quiere eliminar");
+                taskIdString = scanner.nextLine();
+                taskId = Integer.parseInt(taskIdString);
+                TaskManager.deleteTask(taskId,file);
+                System.out.println("Tarea eliminada con exito");
+                break;
         }
-
     }
 }

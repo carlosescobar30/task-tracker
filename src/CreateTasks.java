@@ -9,7 +9,7 @@ public class CreateTasks {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write("{\n");
             writer.write("  \"tasks\":[\n");
-            writer.write(Formatters.TaskToStringBuilder(task).toString());
+            writer.write(Formatters.taskToStringBuilder(task).toString());
             writer.write("\n ]\n}");
 
             System.out.println("archivo creado");
@@ -27,7 +27,7 @@ public class CreateTasks {
         StringBuilder builder = new StringBuilder(ReadTasks.readTasks(file));
         int indexEndJson = builder.lastIndexOf("]");
         builder.insert((indexEndJson - 2),(",\n"));
-        builder.insert(indexEndJson, Formatters.TaskToStringBuilder(task));
+        builder.insert(indexEndJson, Formatters.taskToStringBuilder(task));
         try(FileWriter writer = new FileWriter(file)){
             writer.write(builder.toString());
         }catch (IOException e){

@@ -5,7 +5,11 @@ import java.util.TreeMap;
 
 public class TaskManager {
 
-
+    public static void updateLastId(File file){
+        TreeMap<Integer,Task> tasksTree = Formatters.fileToTreeMap(file);
+        Task lastTask = tasksTree.lastEntry().getValue();
+        Task.setLastId(lastTask.getId());
+    }
 
     public static void updateDescription(Integer taskId, String description,File file){
         TreeMap<Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
@@ -47,9 +51,17 @@ public class TaskManager {
         }
     }
 
-    public static void updateLastId(File file){
-        TreeMap<Integer,Task> tasksTree = Formatters.fileToTreeMap(file);
-        Task lastTask = tasksTree.lastEntry().getValue();
-        Task.setLastId(lastTask.getId());
+    public static void deleteTask (Integer taskId, File file) {
+        TreeMap <Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
+        taskTreeMap.remove(taskId);
+        StringBuilder updatedTasksSB = new StringBuilder();
+        if(!taskTreeMap.isEmpty()){
+            updatedTasksSB = new StringBuilder(Formatters.treeMapToStringBuilder(taskTreeMap,file));
+        }
+        try (FileWriter writer = new FileWriter(file)){
+            writer.write(updatedTasksSB.toString());
+        }catch (IOException e){
+            System.out.println("Error Fatal" + e.getMessage());
+        }
     }
 }
