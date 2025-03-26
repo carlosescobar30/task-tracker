@@ -1,13 +1,12 @@
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 public class Formatters {
 
 
 
-    public static StringBuilder TaskToStringBuilder(Task task) {
+    public static StringBuilder taskToStringBuilder(Task task) {
         StringBuilder formatter = new StringBuilder();
         formatter
                 .append("    {\n")
@@ -31,7 +30,7 @@ public class Formatters {
     }
 
 
-    public static Task StringToTask(String json){
+    public static Task stringToTask(String json){
 
         int id = Integer.parseInt(json.substring(
                 json.indexOf("\"id\":")+5,
@@ -74,11 +73,30 @@ public class Formatters {
             if (!taskStringInd.trim().endsWith("}")){
                 taskStringInd = taskStringInd + "}";
             }
-            tasksTreeMap.put(StringToTask(taskStringInd).getId(), StringToTask(taskStringInd));
+            tasksTreeMap.put(stringToTask(taskStringInd).getId(), stringToTask(taskStringInd));
         }
 
 
         return  tasksTreeMap;
     }
 
+    public static StringBuilder treeMapToStringBuilder(TreeMap<Integer,Task> treeMap, File file){
+        StringBuilder tasksSB = new StringBuilder(ReadTasks.readTasks(file));
+        int indexStartTasks = tasksSB.indexOf("[")+1;
+        int indexEndTasks = tasksSB.indexOf("]");
+        tasksSB.replace(indexStartTasks,indexEndTasks," ");
+        Task lastTask = treeMap.lastEntry().getValue();
+        indexEndTasks = tasksSB.indexOf("]");
+        for(Task task : treeMap.values()){
+            tasksSB.insert(indexEndTasks,"\n").insert(indexEndTasks + 1,Formatters.taskToStringBuilder(task));
+            indexEndTasks = tasksSB.indexOf("]");
+            if (!task.equals(lastTask)){
+                tasksSB.insert(indexEndTasks,",");
+            }else {
+                tasksSB.insert(indexEndTasks,"\n ");
+            }
+            indexEndTasks = tasksSB.indexOf("]");
+        }
+        return tasksSB;
+    }
 }
