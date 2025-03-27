@@ -60,7 +60,7 @@ public class Formatters {
     }
 
     public static TreeMap<Integer,Task> fileToTreeMap(File file) {
-        String json = ReadTasks.readTasks(file);
+        String json = TaskManager.readTasks(file);
         TreeMap<Integer,Task> tasksTreeMap = new TreeMap<>();
         int tasksStart = json.indexOf("\"tasks\":") + 9;
         int tasksEnd = json.indexOf("]",tasksStart);
@@ -75,13 +75,11 @@ public class Formatters {
             }
             tasksTreeMap.put(stringToTask(taskStringInd).getId(), stringToTask(taskStringInd));
         }
-
-
         return  tasksTreeMap;
     }
 
     public static StringBuilder treeMapToStringBuilder(TreeMap<Integer,Task> treeMap, File file){
-        StringBuilder tasksSB = new StringBuilder(ReadTasks.readTasks(file));
+        StringBuilder tasksSB = new StringBuilder(TaskManager.readTasks(file));
         int indexStartTasks = tasksSB.indexOf("[")+1;
         int indexEndTasks = tasksSB.indexOf("]");
         tasksSB.replace(indexStartTasks,indexEndTasks," ");
