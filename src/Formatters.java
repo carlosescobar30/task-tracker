@@ -20,10 +20,10 @@ public class Formatters {
                 .append(task.getStatus())
                 .append("\",\n")
                 .append("     \"creation date\":\"")
-                .append(task.getCreatedAt().format(Task.getDateFormat()))
+                .append(task.getCreatedAt())
                 .append("\",\n")
                 .append("     \"last update date\":\"")
-                .append(task.getUpdateAt().format(Task.getDateFormat()))
+                .append(task.getUpdateAt())
                 .append("\"\n")
                 .append("    }");
         return formatter;
@@ -48,12 +48,11 @@ public class Formatters {
 
         LocalDateTime createdAt = LocalDateTime.parse(json.substring(
                 json.indexOf("\"creation date\":")+16,
-                json.indexOf(",", json.indexOf("\"creation date\":"))).replace("\"","").trim(),Task
-                .getDateFormat());
+                json.indexOf(",", json.indexOf("\"creation date\":"))).replace("\"","").trim());
 
         LocalDateTime updateAt = LocalDateTime.parse(json.substring(
                 json.indexOf("\"last update date\":")+19,
-                json.indexOf("}", json.indexOf("\"last update date\":"))).replace("\"","").trim(),Task.getDateFormat());
+                json.indexOf("}", json.indexOf("\"last update date\":"))).replace("\"","").trim());
 
 
         return new Task(id,description,status,createdAt,updateAt);
