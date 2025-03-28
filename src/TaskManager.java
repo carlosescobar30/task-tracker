@@ -1,8 +1,9 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.TreeMap;
 
 public class TaskManager implements TaskManagement {
-
+    String errorMesagge = "comando no valido\nsi necesitas ayuda usa el comando help";
     //Create
 
     @Override
@@ -30,6 +31,7 @@ public class TaskManager implements TaskManagement {
                 writer.write(builder.toString());
             }catch (IOException e){
                 System.out.println("Error Fatal" + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -64,6 +66,9 @@ public class TaskManager implements TaskManagement {
             int indexValueStart = builder.indexOf("\"description\":",indexId) + 15;
             int indexValueEnd = builder.indexOf("\"", indexValueStart);
             builder.replace(indexValueStart, indexValueEnd,description);
+            int indexDateStart = builder.indexOf("\"last update date\":",indexId) + 20;
+            int indexDateEnd = builder.indexOf("\"", indexDateStart);
+            builder.replace(indexDateStart, indexDateEnd,LocalDateTime.now().toString());
             try (FileWriter writer = new FileWriter(file)){
                 writer.write(builder.toString());
             }catch (IOException e){
@@ -71,11 +76,17 @@ public class TaskManager implements TaskManagement {
             }
         }else {
             System.out.println("Tarea no encontrada");
+            System.out.println(errorMesagge);
         }
     }
 
     @Override
     public void updateStatus(Integer taskId, String status,File file){
+        if (!status.equals("-done") && !status.equals("-in-progress")){
+            System.out.println(errorMesagge);
+            return;
+        }
+        status = status.replace("-"," ").trim();
         TreeMap<Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
         Task task = taskTreeMap.get(taskId);
         task.setDescription(status);
@@ -85,6 +96,9 @@ public class TaskManager implements TaskManagement {
             int indexValueStart = builder.indexOf("\"status\":",indexId) + 10;
             int indexValueEnd = builder.indexOf("\"", indexValueStart);
             builder.replace(indexValueStart, indexValueEnd,status);
+            int indexDateStart = builder.indexOf("\"last update date\":",indexId) + 20;
+            int indexDateEnd = builder.indexOf("\"", indexDateStart);
+            builder.replace(indexDateStart, indexDateEnd,LocalDateTime.now().toString());
             try (FileWriter writer = new FileWriter(file)){
                 writer.write(builder.toString());
             }catch (IOException e){
@@ -92,6 +106,7 @@ public class TaskManager implements TaskManagement {
             }
         }else {
             System.out.println("Tarea no encontrada");
+            System.out.println(errorMesagge);
         }
     }
 
@@ -106,6 +121,11 @@ public class TaskManager implements TaskManagement {
     @Override
     public void deleteTask (Integer taskId, File file) {
         TreeMap <Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
+        if (!taskTreeMap.containsKey(taskId)){
+            System.out.println("Tarea no encontrada");
+            System.out.println(errorMesagge);
+            return;
+        }
         taskTreeMap.remove(taskId);
         StringBuilder updatedTasksSB = new StringBuilder();
         if(!taskTreeMap.isEmpty()){

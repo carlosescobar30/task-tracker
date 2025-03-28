@@ -87,8 +87,8 @@ public class Task {
         return "Id = " + getId() +'\n' +
                 "Description = " + getDescription() +'\n' +
                 "Status = " + getStatus() + '\n' +
-                "Creation date = " + getCreatedAt() + '\n' +
-                "Last update = " + getUpdateAt();
+                "Creation date = " + getCreatedAt().format(Task.getDateFormat()) + '\n' +
+                "Last update = " + getUpdateAt().format(Task.getDateFormat());
     }
 
 
