@@ -10,4 +10,6 @@ public interface TaskManagement {
 
     void deleteTask (Integer taskId, File file);
 
+    void listTasks(String taskStatus, String sortBy, File file);
+
 }

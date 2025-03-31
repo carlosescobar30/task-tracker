@@ -1,9 +1,12 @@
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class TaskManager implements TaskManagement {
-    String errorMesagge = "comando no valido\nsi necesitas ayuda usa el comando help";
+    String errorMessage = "Comando no valido\nSi necesitas ayuda usa el comando help";
+    String errorMessageEng = "Invalid command\nIf you need help, use the help command";
     //Create
 
     @Override
@@ -15,9 +18,8 @@ public class TaskManager implements TaskManagement {
                 writer.write("  \"tasks\":[\n");
                 writer.write(Formatters.taskToStringBuilder(task).toString());
                 writer.write("\n ]\n}");
-                System.out.println("archivo creado");
             } catch (IOException e) {
-                System.out.println("Error Fatal " + e.getMessage());
+                System.out.println("Fatal Error" + e.getMessage());
                 e.printStackTrace();
             }
         }else {
@@ -30,7 +32,7 @@ public class TaskManager implements TaskManagement {
             try(FileWriter writer = new FileWriter(file)){
                 writer.write(builder.toString());
             }catch (IOException e){
-                System.out.println("Error Fatal" + e.getMessage());
+                System.out.println("Fatal Error" + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -46,7 +48,7 @@ public class TaskManager implements TaskManagement {
                 tasksBuilder.append(line).append("\n");
             }
         }catch (IOException e){
-            System.out.println("Error Fatal " + e.getMessage());
+            System.out.println("Fatal Error" + e.getMessage());
             e.printStackTrace();
         }
         return tasksBuilder.toString();
@@ -72,24 +74,27 @@ public class TaskManager implements TaskManagement {
             try (FileWriter writer = new FileWriter(file)){
                 writer.write(builder.toString());
             }catch (IOException e){
-                System.out.println("Error Fatal" + e.getMessage());
+                System.out.println("Fatal Error" + e.getMessage());
             }
         }else {
             System.out.println("Tarea no encontrada");
-            System.out.println(errorMesagge);
+            System.out.println("Task not found\n");
+            System.out.println(errorMessage);
+            System.out.println(errorMessageEng);
         }
     }
 
     @Override
     public void updateStatus(Integer taskId, String status,File file){
-        if (!status.equals("-done") && !status.equals("-in-progress")){
-            System.out.println(errorMesagge);
+        if (!status.equals("done") && !status.equals("in-progress")){
+            System.out.println(errorMessage);
+            System.out.println(errorMessageEng);
             return;
         }
-        status = status.replace("-"," ").trim();
+        status = status.trim();
         TreeMap<Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
         Task task = taskTreeMap.get(taskId);
-        task.setDescription(status);
+        task.setStatus(status);
         StringBuilder builder = new StringBuilder(TaskManager.readTasks(file));
         int indexId = builder.indexOf("\"id\":" + task.getId());
         if (indexId != -1){
@@ -102,11 +107,13 @@ public class TaskManager implements TaskManagement {
             try (FileWriter writer = new FileWriter(file)){
                 writer.write(builder.toString());
             }catch (IOException e){
-                System.out.println("Error Fatal" + e.getMessage());
+                System.out.println("Fatal Error" + e.getMessage());
             }
         }else {
             System.out.println("Tarea no encontrada");
-            System.out.println(errorMesagge);
+            System.out.println("Task not found\n");
+            System.out.println(errorMessage);
+            System.out.println(errorMessageEng);
         }
     }
 
@@ -120,10 +127,17 @@ public class TaskManager implements TaskManagement {
 
     @Override
     public void deleteTask (Integer taskId, File file) {
+        if (!file.exists() || file.length() == 0){
+            System.out.println("Aun no has creado ninguna tarea");
+            System.out.println("You haven't created any tasks yet");
+            return;
+        }
         TreeMap <Integer,Task> taskTreeMap = new TreeMap<>(Formatters.fileToTreeMap(file));
         if (!taskTreeMap.containsKey(taskId)){
             System.out.println("Tarea no encontrada");
-            System.out.println(errorMesagge);
+            System.out.println("Task not found\n");
+            System.out.println(errorMessage);
+            System.out.println(errorMessageEng);
             return;
         }
         taskTreeMap.remove(taskId);
@@ -134,7 +148,38 @@ public class TaskManager implements TaskManagement {
         try (FileWriter writer = new FileWriter(file)){
             writer.write(updatedTasksSB.toString());
         }catch (IOException e){
-            System.out.println("Error Fatal" + e.getMessage());
+            System.out.println("Fatal Error" + e.getMessage());
+        }
+    }
+
+    //List
+    public void listTasks(String taskStatus, String sortBy, File file){
+        if (!file.exists() || file.length() == 0){
+            System.out.println("No hay ninguna tarea que mostrar");
+            System.out.println("There are no tasks to display");
+            return;
+        }
+        TreeMap<Integer,Task> tasks = Formatters.fileToTreeMap(file);
+        if(!taskStatus.equals("all")){
+            tasks.entrySet().removeIf(entry -> !entry.getValue().getStatus().equals(taskStatus));
+        }
+
+        switch (sortBy){
+            case "-sortcd":
+                tasks.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.comparing(Task::getCreatedAt).reversed()))
+                        .forEach(entry -> System.out.println(entry.getValue().toString()));
+                break;
+            case "-sortud":
+                tasks.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.comparing(Task::getUpdateAt).reversed()))
+                        .forEach(entry -> System.out.println(entry.getValue().toString()));
+                break;
+            default :
+                for (Task task : tasks.values()){
+                    System.out.println(task.toString());
+                }
+                break;
         }
     }
 }
