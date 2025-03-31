@@ -1,6 +1,7 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
 public class Task {
     private final int id;
     private static int lastId = 0;
@@ -84,17 +85,12 @@ public class Task {
 
     @Override
     public String toString(){
-        return "Id = " + getId() +'\n' +
-                "Description = " + getDescription() +'\n' +
-                "Status = " + getStatus() + '\n' +
-                "Creation date = " + getCreatedAt().format(Task.getDateFormat()) + '\n' +
-                "Last update = " + getUpdateAt().format(Task.getDateFormat());
+        return "Id: " + getId() +
+                " | Description: " + getDescription() +
+                " | Status: " + getStatus().replace("-"," ") +
+                "\nCreated: " + getCreatedAt().format(Task.getDateFormat()) +
+                " | Last updated: " + getUpdateAt().format(Task.getDateFormat()) + "\n";
     }
-
-
-
-
-
 
 }
 
